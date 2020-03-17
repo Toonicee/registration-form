@@ -3,7 +3,7 @@ import { Form, Input, SubmitButton, ResetButton } from 'formik-antd';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { DeleteTwoTone } from '@ant-design/icons';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -87,8 +87,12 @@ class SignupForm extends React.Component {
       })
       .catch(error => {
         setSubmitting(false);
-        const { errors } = error.response.data;
-        setErrors(errors);
+        if (error.request.status === 422) {
+          const { errors } = error.response.data;
+          setErrors(errors);
+        } else {
+          message.error(error.message);
+        }
       });
   };
 
