@@ -16,8 +16,8 @@ app.use(function(req, res, next) {
 const users = [];
 
 const addUser = user => users.push(user);
-const findOne = where => {
-  const [[key, value]] = Object.entries(where);
+const searchRegisteredUser = userEmail => {
+  const [[key, value]] = Object.entries(userEmail);
   const use = users.find(user => user[key] === value);
   return use === undefined;
 };
@@ -42,7 +42,9 @@ const validationSchema = Yup.object().shape({
     .required('Required'),
   email: Yup.string()
     .email('Invalid email address')
-    .test('email', 'this email is already registered', value => findOne({ email: value }))
+    .test('email', 'this email is already registered', value =>
+      searchRegisteredUser({ email: value })
+    )
     .required('Required'),
   website: Yup.string().url(),
   age: Yup.string()
