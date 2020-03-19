@@ -1,6 +1,5 @@
 import React from 'react';
 import { Form, Input, SubmitButton, ResetButton } from 'formik-antd';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Button, message } from 'antd';
@@ -8,10 +7,11 @@ import { DeleteTwoTone } from '@ant-design/icons';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import InputTypeText from '../input-type-text';
-import InputTypePassword from '../input-type-password';
-import InputTypeNumber from '../input-type-number';
-import InputTypeCheckbox from '../input-type-checkbox';
+import Services from '../../services/services';
+import InputTypeText from '../Input-type-text';
+import InputTypePassword from '../Input-type-password';
+import InputTypeNumber from '../Input-type-number';
+import InputTypeCheckbox from '../Input-type-checkbox';
 
 const validation = Yup.object().shape({
   name: Yup.string()
@@ -35,10 +35,12 @@ const validation = Yup.object().shape({
     .email('Invalid email address')
     .required('Required'),
   website: Yup.string().url(),
-  age: Yup.number()
-    .max(65, 'you must be no older than 65')
-    .positive()
-    .integer()
+  age: Yup.string()
+    .test('age', 'Only numbers', value => /(?=.*[0-9])/.test(value))
+    .test('no-null', 'Enter the correct number', value => value !== null)
+    .test('min', 'you must be older 18', value => value >= 18)
+    .test('max', 'you must be no older than 65', value => value <= 65)
+    .nullable()
     .required('Required'),
   acceptTerms: Yup.boolean()
     .test('age', 'Confirm actions', val => val === true)
@@ -46,24 +48,23 @@ const validation = Yup.object().shape({
 });
 
 class SignupForm extends React.Component {
+  initialState = {
+    skills: [],
+    skillInput: '',
+  };
+
   constructor(props) {
     super(props);
-    this.state = {
-      skills: [],
-      skill: '',
-    };
+    this.state = this.initialState;
+    this.skillInput = React.createRef();
   }
 
   addSkills = () => {
-    const { skill, skills } = this.state;
+    const { skills, skillInput } = this.state;
     this.setState({
-      skills: [...skills, skill],
-      skill: '',
+      skills: [...skills, skillInput],
+      skillInput: '',
     });
-  };
-
-  chahgeSkill = ({ target }) => {
-    this.setState({ skill: target.value });
   };
 
   removeSkill = index => () => {
@@ -72,17 +73,20 @@ class SignupForm extends React.Component {
     this.setState({ skills: updateSkills });
   };
 
+  chahgeSkill = ({ target }) => {
+    this.setState({ skillInput: target.value });
+  };
+
   onSubmit = (values, { setSubmitting, resetForm, setErrors }) => {
-    const { successfulRegistration } = this.props;
+    const { changeSegistrationStatus } = this.props;
+    console.log(values);
     const { skills } = this.state;
     const { skill, ...data } = { ...values, skills };
-    const appURL = 'http://localhost:5000/sing-up';
-    console.log(values);
-    axios
-      .post(appURL, data)
+
+    Services.submitFormData(data)
       .then(() => {
         setSubmitting(false);
-        successfulRegistration(true);
+        changeSegistrationStatus(true);
         resetForm();
       })
       .catch(error => {
@@ -97,7 +101,7 @@ class SignupForm extends React.Component {
   };
 
   render() {
-    const { skills, skill } = this.state;
+    const { skills, skillInput } = this.state;
     return (
       <Formik
         initialValues={{
@@ -106,7 +110,7 @@ class SignupForm extends React.Component {
           repeatPassword: '',
           email: '',
           website: '',
-          age: '',
+          age: 0,
           acceptTerms: false,
         }}
         validationSchema={validation}
@@ -130,10 +134,10 @@ class SignupForm extends React.Component {
             Website
           </InputTypeText>
           <Form.Item name="skill">
-            <label>Your skills</label>
+            <label htmlFor="skills">Your skills</label>
             <RowSkill>
-              <Input id="skill" value={skill} onChange={this.chahgeSkill} />
-              <Button type="primary" onClick={this.addSkills} disabled={skill === ''}>
+              <Input id="skills" value={skillInput} onChange={this.chahgeSkill} />
+              <Button type="primary" onClick={this.addSkills} disabled={skillInput === ''}>
                 add skill
               </Button>
             </RowSkill>
@@ -149,7 +153,7 @@ class SignupForm extends React.Component {
           <InputTypeCheckbox name="acceptTerms">accept terms</InputTypeCheckbox>
           <RowBtn>
             <SubmitButton>Submit</SubmitButton>
-            <ResetButton onClick={() => this.setState({ skills: [] })}>Reset</ResetButton>
+            <ResetButton onClick={() => this.setState(this.initialState)}>Reset</ResetButton>
           </RowBtn>
         </Form>
       </Formik>
@@ -158,7 +162,7 @@ class SignupForm extends React.Component {
 }
 
 SignupForm.propTypes = {
-  successfulRegistration: PropTypes.func.isRequired,
+  changeSegistrationStatus: PropTypes.func.isRequired,
 };
 
 const SkillItem = styled.div`

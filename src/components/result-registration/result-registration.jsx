@@ -4,14 +4,14 @@ import PropTypes from 'prop-types';
 import { Button, Result } from 'antd';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 
-const ResultRegistration = ({ success, successfulRegistration }) => {
+const ResultRegistration = ({ success, changeSegistrationStatus }) => {
   return (
     <WrapperResult success={success}>
       <Result
         icon={<CheckCircleTwoTone twoToneColor="#52c41a" />}
         title="You are successfully registered!"
         extra={
-          <Button onClick={() => successfulRegistration(false)} type="primary">
+          <Button onClick={() => changeSegistrationStatus(false)} type="primary">
             Next
           </Button>
         }
@@ -25,7 +25,7 @@ ResultRegistration.defaultProps = {
 };
 
 ResultRegistration.propTypes = {
-  successfulRegistration: PropTypes.func.isRequired,
+  changeSegistrationStatus: PropTypes.func.isRequired,
   success: PropTypes.bool,
 };
 

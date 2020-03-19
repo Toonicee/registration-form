@@ -14,7 +14,7 @@ const InputTypeNumber = ({ name, children }) => {
       >
         {children}
       </label>
-      <InputNumber min={18} id={name} name={name} />
+      <InputNumber id={name} name={name} />
     </Form.Item>
   );
 };

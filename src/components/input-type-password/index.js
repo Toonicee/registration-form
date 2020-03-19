@@ -1,3 +1,3 @@
-import InputTypePassword from './input-type-password';
+import InputTypePassword from './Input-type-password';
 
 export default InputTypePassword;

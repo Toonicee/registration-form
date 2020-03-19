@@ -1,3 +1,3 @@
-import InputTypeCheckbox from './input-type-checkbox';
+import InputTypeCheckbox from './Input-type-checkbox';
 
 export default InputTypeCheckbox;

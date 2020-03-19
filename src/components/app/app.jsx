@@ -15,8 +15,8 @@ class App extends React.Component {
     };
   }
 
-  successfulRegistration = bool => {
-    this.setState({ success: bool });
+  changeSegistrationStatus = isSuccess => {
+    this.setState({ success: isSuccess });
   };
 
   render() {
@@ -24,11 +24,11 @@ class App extends React.Component {
     return (
       <Main>
         <FormWrapper success={success}>
-          <SignupForm successfulRegistration={this.successfulRegistration} />
+          <SignupForm changeSegistrationStatus={this.changeSegistrationStatus} />
         </FormWrapper>
         <ResultRegistration
           success={success}
-          successfulRegistration={this.successfulRegistration}
+          changeSegistrationStatus={this.changeSegistrationStatus}
         />
       </Main>
     );
@@ -42,7 +42,8 @@ const Main = styled.div`
 `;
 
 const FormWrapper = styled.div`
-  min-width: 30%;
+  max-width: 30%;
+  width: 100%;
   padding: 2%;
   opacity: ${props => (props.success ? 0.3 : 1)};
   border-radius: 5px;

@@ -1,3 +1,3 @@
-import InputTypeNumber from './input-type-number';
+import InputTypeNumber from './Input-type-number';
 
 export default InputTypeNumber;
